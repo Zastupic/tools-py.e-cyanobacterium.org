@@ -1,34 +1,34 @@
 from flask import Flask
-from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
 from flask_uploads import IMAGES, UploadSet, configure_uploads
-from os import path
+from .shared import db
+import os
 
-db = SQLAlchemy()
 DB_NAME = "database.db"
-UPLOAD_FOLDER = 'static/uploads'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'tif', 'tiff', 'gif', 'bmp'}
+UPLOAD_FOLDER = 'website/static/uploads/'
+ALLOWED_EXTENSIONS = set(['.png', '.jpg', '.jpeg', '.tif', '.tiff', '.bmp', '.gif'])
 
-images = UploadSet("images", IMAGES)
+images = UploadSet('images', IMAGES)
 
 def create_app():
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = 'blablabla' 
-    app.config["UPLOADED_IMAGES_DEST"] = UPLOAD_FOLDER
-    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
-    db.init_app(app) 
+    app.config['UPLOADED_IMAGES_DEST'] = UPLOAD_FOLDER # if UploadSet ("invoices", INVOICES) --> app.config[UPLOADED_INVOICES_DEST]
+    app.config['SECRET_KEY'] = 'TotallySecretKey' 
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}' 
+    
+    db.init_app(app)
 
     from .views import views
     from .auth import auth
     from .cell_count import cell_count
     from .clear_uploads import clear_uploads
-
+    from .models import User
+      
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
     app.register_blueprint(cell_count, url_prefix='/')
     app.register_blueprint(clear_uploads, url_prefix='/')
-
-    from .models import User
 
     #### DATABASE ####
     with app.app_context(): # creating the database
@@ -48,7 +48,7 @@ def create_app():
 
     return app
 
-def create_database(app):
-    if not path.exists('website/' + DB_NAME):
-        db.create_all(app=app)
-        print('Created Database!')
+#def create_database(app):
+    #if not path.exists('website/' + DB_NAME):
+    #    db.create_all(app=app)
+    #    print('Created Database!')
