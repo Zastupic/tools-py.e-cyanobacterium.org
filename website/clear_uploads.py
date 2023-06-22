@@ -24,6 +24,6 @@ def delete_images():
 
 # setting the scheduler
 scheduler = BackgroundScheduler()
-scheduler.add_job(func=delete_images, trigger="interval", seconds=600)
+scheduler.add_job(func=delete_images, trigger="interval", seconds=3600)
 scheduler.start()
 atexit.register(lambda: scheduler.shutdown()) # Exit the scheduler when exiting the app
