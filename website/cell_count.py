@@ -5,9 +5,9 @@ from werkzeug.utils import secure_filename
 from . import ALLOWED_EXTENSIONS, UPLOAD_FOLDER
 from flask_login import current_user
 
-cell_count = Blueprint('cell_counting', __name__)
+cell_counting = Blueprint('cell_counting', __name__)
 
-@cell_count.route('/cell_count', methods=['GET', 'POST'])
+@cell_counting.route('/cell_count', methods=['GET', 'POST'])
 def count_cells():
     if current_user.is_authenticated:
         if request.method == "POST":               
