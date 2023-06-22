@@ -29,7 +29,7 @@ def create_app():
     app.register_blueprint(clear_uploads, url_prefix='/')
 
     from .models import User
-    
+
     #### DATABASE ####
     with app.app_context(): # creating the database
         db.create_all()
@@ -48,4 +48,7 @@ def create_app():
 
     return app
 
-
+def create_database(app):
+    if not path.exists('website/' + DB_NAME):
+        db.create_all(app=app)
+        print('Created Database!')
