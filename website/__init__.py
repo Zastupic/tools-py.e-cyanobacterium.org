@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_uploads import IMAGES, UploadSet, configure_uploads
 from .shared import db
-import os
+from os import path
 
 DB_NAME = "database.db"
 UPLOAD_FOLDER = 'website/static/uploads/'
@@ -21,13 +21,13 @@ def create_app():
 
     from .views import views
     from .auth import auth
-    from .cell_count import cell_count
+    from .cell_count import cell_counting
     from .clear_uploads import clear_uploads
     from .models import User
       
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
-    app.register_blueprint(cell_count, url_prefix='/')
+    app.register_blueprint(cell_counting, url_prefix='/')
     app.register_blueprint(clear_uploads, url_prefix='/')
 
     #### DATABASE ####
@@ -48,7 +48,7 @@ def create_app():
 
     return app
 
-#def create_database(app):
-    #if not path.exists('website/' + DB_NAME):
-    #    db.create_all(app=app)
-    #    print('Created Database!')
+def create_database(app):
+    if not path.exists('website/' + DB_NAME):
+        db.create_all(app=app)
+        print('Created Database!')
