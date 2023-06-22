@@ -1,0 +1,115 @@
+{% extends "base.html" %} 
+
+{% block title %} 
+    Cell counting
+{% endblock %}
+
+{% block content %}
+<h1> Cell counting</h1>
+<br>
+<p>Welcome to the cell counting app! 
+<br>
+To count the cells in your microscopy image, please follow the instructions below:</p>
+<ol>
+    <li>Enter pixel size</li>
+    <li>Enter depth of the microscopy chamber</li>
+    <li>Enter minimal cell diameter</li>
+    <li>Select and upload image from your computer</li>
+    <li>Count the cells</li>
+    <br>
+    <li>Optional: If some cells have been missed, a correction can be made by entering the number of missed cells into the respective form and repeating the count.
+    <i>(Also a negative number can be entered)</i>
+</ol> 
+<br>
+<br>
+<form method="POST" enctype="multipart/form-data" action="{{ url_for('cell_counting.count_cells') }}">
+    <div class="form-group">
+    <label for="pixel_size"><p class="font-weight-bold">{{ '1. Enter pixel size (nm)' }}</p></label>
+    <input  
+        type="number"
+        id="pixel_size" 
+        class="form-control"
+        name="pixel_size"
+        value=""
+    />
+    <br>
+    <div class="form-group">
+    <label for="chamber_depth"><p class="font-weight-bold">{{ '2. Enter depth of the microscopy chamber (nm)' }}</p></label>
+    <input  
+        type="number"
+        class="form-control"
+        id="chamber_depth"
+        name="chamber_depth"
+        value="120"
+    />
+    <br>
+    <div class="form-group">
+    <label for="minimal_size"><p class="font-weight-bold">{{ '3. Enter minimal cell diameter (µm)' }}</p></label>
+    <br>
+    <input  
+        type="number"
+        class="form-control"
+        id="minimal_size"
+        name="minimal_size"
+        value="1"
+    />
+    <br>
+    <div class="form-group">
+    <label for="manually_identified_cells"><p class="font-weight-bold">{{ '4. Enter number of missed cells (optional, for repeated counting)' }}</p></label>
+    <input  
+        type="number"
+        class="form-control"
+        id="manually_identified_cells" 
+        name="manually_identified_cells"
+        value="0"
+    />
+    </div>
+    <br>
+    <label class="form-label" for="customFile"><p class="font-weight-bold">5. Upload your image</p></label>
+    <input class="form-control" type="file" name="image">
+    <br>
+    <button type="submit" class="btn btn-primary">Upload image and count the cells</button>
+</form>
+
+                
+<br>
+    {% if image_for_cell_counting %}
+    <br>
+    <h2>Cell count: {{ cells_per_ml }} x 10<sup>6</sup> cells mL<sup>-1</sup> </h2>
+    <p>Identified cells (by the cell-counting script): {{ cell_count }}</p>
+    <p>Additionally identified cells (manual correction): {{ manually_identified_cells }}</p>
+    <p>Image resolution: {{ x_pixels }} x {{ y_pixels }} pixels </p>
+    <p>Image area: {{ img_area_mm2 }} mm<sup>2</sup> ({{ x_um }} x {{ y_um }} µm)</p>
+    <p>Volume of the imaged area: {{ img_volume_nl }} nL</p>
+    <p>Pixel size: {{ pixel_size_nm }} nm 
+    / Depth of the chamber: {{ depth_nm }} nm 
+    / Minimal cell size: {{ minimal_expected_size }} µm</p>
+    <br>
+
+    <form method="POST">
+
+        </div>
+    </form>
+
+    <br>
+    <div class="imgbox">
+        <figcaption>Identified cells (combined high and low sensitivity threshold)</figcaption> 
+        <img src="{{ url_for('static', filename='uploads/'+user_id+'/'+img_counted) }}" class="center-fit">
+    </div>
+
+    <br>
+    <div class="imgbox">
+        <figcaption>Thresholded image (high sensitivity)</figcaption>
+        <img src="{{ url_for('static', filename='uploads/'+user_id+'/'+img_th_to_show) }}" class="center-fit">
+    </div>
+
+    <br>
+    <div class="imgbox">
+        <figcaption>Original image</figcaption>
+        <img src="{{ url_for('static', filename='uploads/'+user_id+'/'+image_for_cell_counting) }}" class="center-fit">
+    </div> 
+
+    {% endif %}
+<br>
+
+{% endblock %}
